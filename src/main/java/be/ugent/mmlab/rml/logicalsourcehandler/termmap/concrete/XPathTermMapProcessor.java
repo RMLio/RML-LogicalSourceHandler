@@ -3,8 +3,6 @@ package be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.AbstractTermMapProcessor;
 import java.util.ArrayList;
 import java.util.List;
-import jlibs.xml.DefaultNamespaceContext;
-import jlibs.xml.Namespaces;
 import nu.xom.Attribute;
 import nu.xom.Node;
 import nu.xom.Nodes;
@@ -74,7 +72,8 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
     }
 
     
-    public DefaultNamespaceContext get_namespaces() {
+    //TODO: Deprecated, remove
+    /*public DefaultNamespaceContext get_namespaces() {
         //TODO:Get the namespaces from xml file
         DefaultNamespaceContext dnc = new DefaultNamespaceContext();
 
@@ -112,7 +111,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
         dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
 
         return dnc;
-    }
+    }*/
     
     @Override
     public String cleansing(String value) {

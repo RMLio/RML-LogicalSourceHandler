@@ -10,7 +10,7 @@
   <groupId>be.ugent.mmlab.rml</groupId>
   <artifactId>RML-LogicalSourceHandler</artifactId>
   <version>1.0</version>
-  <name>RML-LogicalSourceHandler</name>
+  <name>RML - Logical Source Handler</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,7 +21,7 @@
         <repository>
             <id>repository.jboss.org</id>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-        </repository> 
+        </repository>
         <repository>
             <id>jlibs-repository</id>
             <name>JLibs Repository</name>

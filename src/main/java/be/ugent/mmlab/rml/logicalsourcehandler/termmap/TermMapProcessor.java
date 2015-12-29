@@ -1,6 +1,8 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
+import be.ugent.mmlab.rml.model.RDFTerm.TermType;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.util.List;
 import org.openrdf.model.Value;
 
@@ -28,6 +30,9 @@ public interface TermMapProcessor {
      * @return
      */
     public String processTemplate(TermMap map, String expression, String template, String replacement);
+    
+    public List<String> templateHandler(String template, Object node, 
+            QLVocabulary.QLTerm referenceFormulation, TermType termType);
     
     
     /**

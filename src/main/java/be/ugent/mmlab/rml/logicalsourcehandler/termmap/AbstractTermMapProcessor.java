@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -104,7 +105,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                                         .replaceAll("\\%29", ")")
                                         .replaceAll("\\%7E", "~"));
                             } else {
-                                temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                                temp = temp.replaceAll("\\{" + expression + "\\}", 
+                                        Matcher.quoteReplacement(replacement));
                             }
                             //Use encoding UTF-8 explicit URL encode; other one is deprecated 
                         } catch (UnsupportedEncodingException ex) {

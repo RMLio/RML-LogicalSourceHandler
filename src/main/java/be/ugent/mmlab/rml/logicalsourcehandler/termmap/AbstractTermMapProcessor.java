@@ -35,7 +35,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(AbstractTermMapProcessor.class);
+            LoggerFactory.getLogger(
+            AbstractTermMapProcessor.class.getSimpleName());
     
     @Override
     public List<String> processTermMap(TermMap map, Object node) {

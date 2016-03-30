@@ -57,7 +57,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
         }
         StringBufferInputStream input = 
                 new StringBufferInputStream(node.toXML().toString());
-        log.debug("node " + node.toXML().toString());
+        
         InputSource source = new InputSource(input);
         Event event = dog.createEvent();
         event.setXMLBuilder(new XOMBuilder());

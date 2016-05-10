@@ -49,6 +49,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
     private List<String> extractValueFromNode(Node node, String expression) {
         //DefaultNamespaceContext dnc = get_namespaces();
         final List<String> list = new ArrayList<>();
+        dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
         XMLDog dog = new XMLDog(dnc);
         try {
             dog.addXPath("/*/" + expression);

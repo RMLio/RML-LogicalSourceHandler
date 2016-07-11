@@ -1,9 +1,13 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.util.List;
+import java.util.Map;
+
+import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
 /**
@@ -42,6 +46,9 @@ public interface TermMapProcessor {
      * @return
      */
     public List<String> processTermMap(TermMap map, Object node);
+
+    public List<String> processFunctionTermMap(
+            FunctionTermMap map, Object node, String function, Map<String,String> parameters);
     
     /**
      *

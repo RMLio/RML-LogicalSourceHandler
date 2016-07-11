@@ -1,13 +1,9 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
+import be.ugent.mmlab.rml.grel.ConcreteGrelProcessor;
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.CONSTANT_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.REFERENCE_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.TEMPLATE_VALUED;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.LITERAL;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.model.termMap.ReferenceMap;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
@@ -15,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +39,11 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     public List<String> processTermMap(TermMap map, Object node) {
 
         List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
-        
+
+        if(map.getClass().getSimpleName().equals("StdFunctionTermMap")){
+            log.debug("Function Term Map is always Literal valued");
+        }
+
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
                 log.debug("Reference valued");
@@ -135,6 +136,19 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 return values;
         }
 
+    }
+
+    public List<String> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String,String> parameters) {
+
+        List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
+        if(function.startsWith("http://semweb.mmlab.be/ns/grel#")){
+            log.debug("Call the GREL Processor...");
+
+            ConcreteGrelProcessor grelProcessor = new ConcreteGrelProcessor();
+            String value = grelProcessor.processFunction(function, map.getFunctionTriplesMap(), node, parameters);
+            values.add(value);
+        }
+        return values;
     }
     
     @Override

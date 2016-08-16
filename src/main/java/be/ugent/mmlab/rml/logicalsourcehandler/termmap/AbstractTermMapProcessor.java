@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
-import be.ugent.mmlab.rml.grel.ConcreteGrelProcessor;
+
 import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
@@ -58,7 +58,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 return valueList;
 
             case CONSTANT_VALUED:
-                log.debug("Constant valued ");
+                log.debug("Constant valued");
                 //Extract the value directly from the mapping
                 values.add(map.getConstantValue().stringValue().trim());
                 return values;
@@ -143,16 +143,46 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
         if(function.startsWith("http://semweb.mmlab.be/ns/grel#")){
             log.debug("Call the GREL Processor...");
-
-            ConcreteGrelProcessor grelProcessor = new ConcreteGrelProcessor();
-            String value = grelProcessor.processFunction(function, map.getFunctionTriplesMap(), node, parameters);
-            values.add(value);
         }
+
+        //TODO: create proper processor for this
+        if(function.startsWith("http://dbpedia.org/function/simplePropertyFunction")) {
+            values.add(parameters.get("http://dbpedia.org/function/propertyParameter"));
+        }
+
+        if(function.startsWith("http://dbpedia.org/function/startDateFunction")) {
+            System.out.println("Processing date");
+        }
+
+        if(function.startsWith("http://dbpedia.org/function/latFunction")) {
+            String latParameter = parameters.get("http://dbpedia.org/function/latParameter");
+            if(latParameter != null) {
+                values.add(parameters.get("http://dbpedia.org/function/latParameter"));
+            } else {
+                values.add(parameters.get("http://dbpedia.org/function/latDegreesParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/latMinutesParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/latSecondsParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/latDirectionParameter")) ;
+            }
+        }
+
+        if(function.startsWith("http://dbpedia.org/function/lonFunction")) {
+            String lonParameter = parameters.get("http://dbpedia.org/function/lonParameter");
+            if(lonParameter != null) {
+                values.add(parameters.get("http://dbpedia.org/function/lonParameter"));
+            } else {
+                values.add(parameters.get("http://dbpedia.org/function/lonDegreesParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/lonMinutesParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/lonSecondsParameter") +
+                        " " + parameters.get("http://dbpedia.org/function/lonDirectionParameter")) ;
+            }
+        }
+
         return values;
     }
-    
+
     @Override
-    public List<String> templateHandler(String template, Object node, 
+    public List<String> templateHandler(String template, Object node,
             QLTerm referenceFormulation, TermType termType) {
         List<String> values = new ArrayList<>();
 

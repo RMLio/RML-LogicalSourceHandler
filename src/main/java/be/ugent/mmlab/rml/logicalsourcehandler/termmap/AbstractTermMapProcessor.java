@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.BNodeImpl;
-import org.openrdf.model.impl.LiteralImpl;
-import org.openrdf.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.BNodeImpl;
+import org.eclipse.rdf4j.model.impl.LiteralImpl;
+import org.eclipse.rdf4j.model.impl.URIImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +35,9 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
             LoggerFactory.getLogger(
             AbstractTermMapProcessor.class.getSimpleName());
     
-    @Override
     public List<String> processTermMap(TermMap map, Object node) {
 
-        List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
+        List<String> values = new ArrayList<String>(), valueList = new ArrayList<String>();
 
         if(map.getClass().getSimpleName().equals("StdFunctionTermMap")){
             log.debug("Function Term Map is always Literal valued");
@@ -123,7 +122,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 }
                 
                 //Check if there are any placeholders left in the templates and remove uris that are not
-                List<String> validValues = new ArrayList<>();
+                List<String> validValues = new ArrayList<String>();
                 for (String uri : values){
                     StdTemplateMap templateMap = new StdTemplateMap(uri);
                     if (templateMap.extractVariablesFromStringTemplate(uri).isEmpty()){
@@ -140,7 +139,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
 
     public List<String> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String,String> parameters) {
 
-        List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
+        List<String> values = new ArrayList<String>(), valueList = new ArrayList<String>();
         if(function.startsWith("http://semweb.mmlab.be/ns/grel#")){
             log.debug("Call the GREL Processor...");
 
@@ -151,10 +150,9 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         return values;
     }
     
-    @Override
-    public List<String> templateHandler(String template, Object node, 
+    public List<String> templateHandler(String template, Object node,
             QLTerm referenceFormulation, TermType termType) {
-        List<String> values = new ArrayList<>();
+        List<String> values = new ArrayList<String>();
 
         Set<String> tokens =
                 StdTemplateMap.extractVariablesFromStringTemplate(template);
@@ -211,7 +209,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         }
 
         //Check if there are any placeholders left in the templates and remove uris that are not
-        List<String> validValues = new ArrayList<>();
+        List<String> validValues = new ArrayList<String>();
         for (String uri : values) {
             StdTemplateMap templateMap = new StdTemplateMap(uri);
             if (templateMap.extractVariablesFromStringTemplate(uri).isEmpty()) {
@@ -221,7 +219,6 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         return values;
     }
     
-    @Override
     public String processTemplate(
             TermMap map, String expression, String template, String replacement) {
         log.error("Template processing...");
@@ -255,7 +252,6 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         return template.toString();
     }
     
-    @Override
     public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap){
         TermType termType = termMap.getTermType();
         String languageTag = termMap.getLanguageTag();

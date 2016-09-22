@@ -15,11 +15,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.BNodeImpl;
-import org.eclipse.rdf4j.model.impl.LiteralImpl;
-import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,7 +253,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap){
         TermType termType = termMap.getTermType();
         String languageTag = termMap.getLanguageTag();
-        URI datatype = termMap.getDataType();
+        IRI datatype = termMap.getDataType();
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         
         switch (termType) {
             case IRI:
@@ -267,15 +266,16 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                         valueList = new ArrayList<Value>();
                     }
                     try {
-                        new URIImpl(cleansing(value));
+                        vf.createIRI(cleansing(value));
                     } catch (Exception e) {
                         return valueList;
                     }
-                    valueList.add(new URIImpl(cleansing(value)));
-                } 
+                    valueList.add(vf.createIRI(cleansing(value)));
+                }
                 break;
             case BLANK_NODE:
-                valueList.add(new BNodeImpl(cleansing(value)));
+
+                valueList.add(vf.createBNode(cleansing(value)));
                 break;
             case LITERAL:
                 if (languageTag != null && !value.equals("")) {
@@ -283,11 +283,11 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                         valueList = new ArrayList<Value>();
                     }
                     value = cleansing(value);
-                    valueList.add(new LiteralImpl(value, languageTag));
+                    valueList.add(vf.createLiteral(value,languageTag));
                 } else if (value != null && !value.equals("") && datatype != null) {
-                        valueList.add(new LiteralImpl(value, datatype));
+                        valueList.add(vf.createLiteral(value,datatype));
                 } else if (value != null && !value.equals("")) {
-                    valueList.add(new LiteralImpl(value.trim()));
+                    valueList.add(vf.createLiteral(value.trim()));
                 }
         }
         return valueList;

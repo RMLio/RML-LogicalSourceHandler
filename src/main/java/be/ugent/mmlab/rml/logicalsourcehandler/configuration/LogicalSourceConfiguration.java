@@ -33,7 +33,7 @@ public class LogicalSourceConfiguration {
 
     public static CommandLine parseArguments(String[] args) throws ParseException {
 
-        CommandLineParser cliParser = new GnuParser();
+        CommandLineParser cliParser = new DefaultParser();
         return cliParser.parse(getCliOptions(), args);
     }
 

@@ -24,6 +24,8 @@ public class LogicalSourceConfiguration {
                 "the URI of the mapping file (required)");
         cliOptions.addOption("o", "output file", true,
                 "the URI of the output file (required)");
+        cliOptions.addOption("f",
+                "format", true, "gives the output format.");
         cliOptions.addOption("tm", "Triples Map", true,
                 "Triples Map to be executed.");
         cliOptions.addOption("b", "base IRI", true,

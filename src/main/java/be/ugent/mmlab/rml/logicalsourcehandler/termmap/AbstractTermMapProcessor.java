@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
-import be.ugent.mmlab.rml.grel.ConcreteGrelProcessor;
+import be.ugent.mmlab.rml.function.ConcreteFunctionProcessor;
 import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
@@ -32,6 +32,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     private static final Logger log = 
             LoggerFactory.getLogger(
             AbstractTermMapProcessor.class.getSimpleName());
+
+    private ConcreteFunctionProcessor fnProcessor = new ConcreteFunctionProcessor();
     
     public List<String> processTermMap(TermMap map, Object node) {
 
@@ -138,11 +140,10 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     public List<String> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String,String> parameters) {
 
         List<String> values = new ArrayList<String>(), valueList = new ArrayList<String>();
-        if(function.startsWith("http://semweb.mmlab.be/ns/grel#")){
-            log.debug("Call the GREL Processor...");
+        log.debug("Call the Function Processor...");
 
-            ConcreteGrelProcessor grelProcessor = new ConcreteGrelProcessor();
-            String value = grelProcessor.processFunction(function, map.getFunctionTriplesMap(), node, parameters);
+        String value = this.fnProcessor.processFunction(function, parameters);
+        if (!value.equals("")) {
             values.add(value);
         }
         return values;

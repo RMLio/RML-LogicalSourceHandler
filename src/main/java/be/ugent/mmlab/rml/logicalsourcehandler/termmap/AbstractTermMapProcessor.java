@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.*;
@@ -33,7 +35,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
             LoggerFactory.getLogger(
             AbstractTermMapProcessor.class.getSimpleName());
 
-    private ConcreteFunctionProcessor fnProcessor = new ConcreteFunctionProcessor();
+    private ConcreteFunctionProcessor fnProcessor = ConcreteFunctionProcessor.getInstance();
     
     public List<String> processTermMap(TermMap map, Object node) {
 
@@ -142,11 +144,16 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         List<String> values = new ArrayList<String>(), valueList = new ArrayList<String>();
         log.debug("Call the Function Processor...");
 
-        String value = this.fnProcessor.processFunction(function, parameters);
-        if (!value.equals("")) {
-            values.add(value);
+        ArrayList<String> valuess = this.fnProcessor.processFunction(function, parameters);
+
+        for(String value: values) {
+            if (value != null) {
+                if (!value.equals("")) {
+                    values.add(value);
+                }
+            }
         }
-        return values;
+        return valuess;
     }
     
     public List<String> templateHandler(String template, Object node,

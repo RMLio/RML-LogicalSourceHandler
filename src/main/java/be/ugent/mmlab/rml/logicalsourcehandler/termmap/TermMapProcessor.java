@@ -23,7 +23,7 @@ public interface TermMapProcessor {
      * @return extracted value
      */
     public List<String> extractValueFromNode(Object node, String expression);
-
+    
     /**
      *
      * @param map

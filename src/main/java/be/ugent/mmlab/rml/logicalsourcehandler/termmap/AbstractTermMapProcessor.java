@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
@@ -146,14 +146,14 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
 
         ArrayList<String> valuess = this.fnProcessor.processFunction(function, parameters);
 
-        for(String value: values) {
+        for(String value: valuess) {
             if (value != null) {
                 if (!value.equals("")) {
                     values.add(value);
                 }
             }
         }
-        return valuess;
+        return values;
     }
     
     public List<String> templateHandler(String template, Object node,

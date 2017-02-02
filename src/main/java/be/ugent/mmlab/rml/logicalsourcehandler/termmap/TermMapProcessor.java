@@ -46,7 +46,7 @@ public interface TermMapProcessor {
      */
     public List<String> processTermMap(TermMap map, Object node);
 
-    public List<String> processFunctionTermMap(
+    public List<Value> processFunctionTermMap(
             FunctionTermMap map, Object node, String function, Map<String,String> parameters);
     
     /**

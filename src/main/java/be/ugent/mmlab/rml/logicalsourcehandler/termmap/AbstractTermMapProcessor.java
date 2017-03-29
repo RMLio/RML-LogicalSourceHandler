@@ -1,13 +1,9 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
+import be.ugent.mmlab.rml.function.ConcreteFunctionProcessor;
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.CONSTANT_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.REFERENCE_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.TEMPLATE_VALUED;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.LITERAL;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.model.termMap.ReferenceMap;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
@@ -15,14 +11,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.BNodeImpl;
-import org.openrdf.model.impl.LiteralImpl;
-import org.openrdf.model.impl.URIImpl;
+//import java.util.stream.Collectors;
+
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +34,17 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     private static final Logger log = 
             LoggerFactory.getLogger(
             AbstractTermMapProcessor.class.getSimpleName());
+
+    private ConcreteFunctionProcessor fnProcessor = ConcreteFunctionProcessor.getInstance();
     
-    @Override
     public List<String> processTermMap(TermMap map, Object node) {
 
-        List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
-        
+        List<String> values = new ArrayList<String>(), valueList = new ArrayList<String>();
+
+        if(map.getClass().getSimpleName().equals("StdFunctionTermMap")){
+            log.debug("Function Term Map is always Literal valued");
+        }
+
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
                 log.debug("Reference valued");
@@ -122,7 +124,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 }
                 
                 //Check if there are any placeholders left in the templates and remove uris that are not
-                List<String> validValues = new ArrayList<>();
+                List<String> validValues = new ArrayList<String>();
                 for (String uri : values){
                     StdTemplateMap templateMap = new StdTemplateMap(uri);
                     if (templateMap.extractVariablesFromStringTemplate(uri).isEmpty()){
@@ -136,11 +138,16 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         }
 
     }
+
+    public List<Value> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String, String> parameters) {
+        log.debug("Call the Function Processor...");
+
+        return this.fnProcessor.processFunction(function, parameters);
+    }
     
-    @Override
-    public List<String> templateHandler(String template, Object node, 
+    public List<String> templateHandler(String template, Object node,
             QLTerm referenceFormulation, TermType termType) {
-        List<String> values = new ArrayList<>();
+        List<String> values = new ArrayList<String>();
 
         Set<String> tokens =
                 StdTemplateMap.extractVariablesFromStringTemplate(template);
@@ -197,7 +204,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         }
 
         //Check if there are any placeholders left in the templates and remove uris that are not
-        List<String> validValues = new ArrayList<>();
+        List<String> validValues = new ArrayList<String>();
         for (String uri : values) {
             StdTemplateMap templateMap = new StdTemplateMap(uri);
             if (templateMap.extractVariablesFromStringTemplate(uri).isEmpty()) {
@@ -207,7 +214,6 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         return values;
     }
     
-    @Override
     public String processTemplate(
             TermMap map, String expression, String template, String replacement) {
         log.error("Template processing...");
@@ -241,11 +247,11 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
         return template.toString();
     }
     
-    @Override
     public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap){
         TermType termType = termMap.getTermType();
         String languageTag = termMap.getLanguageTag();
-        URI datatype = termMap.getDataType();
+        IRI datatype = termMap.getDataType();
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         
         switch (termType) {
             case IRI:
@@ -257,15 +263,16 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                         valueList = new ArrayList<Value>();
                     }
                     try {
-                        new URIImpl(cleansing(value));
+                        vf.createIRI(cleansing(value));
                     } catch (Exception e) {
                         return valueList;
                     }
-                    valueList.add(new URIImpl(cleansing(value)));
-                } 
+                    valueList.add(vf.createIRI(cleansing(value)));
+                }
                 break;
             case BLANK_NODE:
-                valueList.add(new BNodeImpl(cleansing(value)));
+
+                valueList.add(vf.createBNode(cleansing(value)));
                 break;
             case LITERAL:
                 if (languageTag != null && !value.equals("")) {
@@ -273,11 +280,11 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                         valueList = new ArrayList<Value>();
                     }
                     value = cleansing(value);
-                    valueList.add(new LiteralImpl(value, languageTag));
+                    valueList.add(vf.createLiteral(value,languageTag));
                 } else if (value != null && !value.equals("") && datatype != null) {
-                        valueList.add(new LiteralImpl(value, datatype));
+                        valueList.add(vf.createLiteral(value,datatype));
                 } else if (value != null && !value.equals("")) {
-                    valueList.add(new LiteralImpl(value.trim()));
+                    valueList.add(vf.createLiteral(value.trim()));
                 }
         }
         return valueList;

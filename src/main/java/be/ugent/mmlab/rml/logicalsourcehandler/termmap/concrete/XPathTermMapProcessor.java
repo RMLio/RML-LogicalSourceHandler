@@ -48,7 +48,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
      */
     private List<String> extractValueFromNode(Node node, String expression) {
         //DefaultNamespaceContext dnc = get_namespaces();
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
         XMLDog dog = new XMLDog(dnc);
         try {
@@ -97,12 +97,10 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
     }
 
 
-    @Override
     public List<String> extractValueFromNode(Object node, String expression) {
         return extractValueFromNode((Node) node, expression);
     }
     
-    @Override
     public String cleansing(String value) {
         return value;
     }

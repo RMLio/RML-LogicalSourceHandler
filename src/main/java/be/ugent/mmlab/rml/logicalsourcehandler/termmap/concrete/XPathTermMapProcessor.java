@@ -2,6 +2,8 @@ package be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete;
 
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.AbstractTermMapProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
+
+import java.io.ByteArrayInputStream;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +58,10 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
         } catch (SAXPathException ex) {
             log.error("SAXPathException " + ex);
         }
-        StringBufferInputStream input = 
-                new StringBufferInputStream(node.toXML().toString());
+//        StringBufferInputStream input = 
+//                new StringBufferInputStream(node.toXML().toString());
+        
+        ByteArrayInputStream input = new ByteArrayInputStream(node.toXML().getBytes());
         
         InputSource source = new InputSource(input);
         Event event = dog.createEvent();

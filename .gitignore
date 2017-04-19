@@ -1,6 +1,7 @@
 
+# eclipse
 .classpath
 .project
 .settings/
 dependency-reduced-pom.xml
-/target/
+target/

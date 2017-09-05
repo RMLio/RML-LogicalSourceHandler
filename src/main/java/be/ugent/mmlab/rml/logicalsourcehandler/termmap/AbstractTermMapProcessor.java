@@ -139,7 +139,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
 
     }
 
-    public List<Value> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String, String> parameters) {
+    public List<Value> processFunctionTermMap(FunctionTermMap map, Object node, String function, Map<String, Object> parameters) {
         log.debug("Call the Function Processor...");
 
         return this.fnProcessor.processFunction(function, parameters);

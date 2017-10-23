@@ -2,12 +2,13 @@ package be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete;
 
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.AbstractTermMapProcessor;
 import com.jayway.jsonpath.JsonPath;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.minidev.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * RML Processor
@@ -34,7 +35,13 @@ public class JSONPathTermMapProcessor extends AbstractTermMapProcessor {
                 JSONArray arr = (JSONArray) val;
                 return Arrays.asList(arr.toArray(new String[0]));
             }
-            list.add((String) val.toString());
+
+            // handle null values
+            if (val == null) {
+                val = "";
+            }
+
+            list.add(val.toString());
             return list;
         } catch (com.jayway.jsonpath.InvalidPathException ex) {
             log.debug("InvalidPathException " + ex + "for " + expression);

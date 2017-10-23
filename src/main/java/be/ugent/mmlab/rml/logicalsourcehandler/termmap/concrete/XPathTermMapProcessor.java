@@ -17,6 +17,7 @@ import org.xml.sax.InputSource;
 
 import javax.xml.xpath.XPathException;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
             log.error("SAXPathException " + ex);
         }
         ByteArrayInputStream input =
-                new ByteArrayInputStream(node.toXML().getBytes());
+                new ByteArrayInputStream(node.toXML().getBytes(Charset.forName("UTF-8")));
 
         InputSource source = new InputSource(input);
         Event event = dog.createEvent();

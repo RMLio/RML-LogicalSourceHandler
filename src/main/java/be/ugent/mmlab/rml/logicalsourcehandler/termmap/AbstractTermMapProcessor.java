@@ -1,23 +1,10 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.CONSTANT_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.REFERENCE_VALUED;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.TEMPLATE_VALUED;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.LITERAL;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.model.termMap.ReferenceMap;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.BNodeImpl;
@@ -25,6 +12,14 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * RML Processor
@@ -49,7 +44,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 //Get the expression and extract the value
                 ReferenceMap identifier = map.getReferenceMap();
                 values = extractValueFromNode(
-                        node, identifier.getReference().toString().trim());
+                        node, identifier.getReference().trim());
 
                 for (String value : values) {
                     valueList.add(value.trim().replace("\n", " "));
@@ -107,7 +102,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                                         .replaceAll("\\%27", "'")
                                         .replaceAll("\\%28", "(")
                                         .replaceAll("\\%29", ")")
-                                        .replaceAll("\\%7E", "~"));
+                                        .replaceAll("\\%7E", "~"))
+                                        .replaceAll("\\%3A", ":");
                             } else {
                                 temp = temp.replaceAll("\\{" + expression + "\\}", 
                                         Matcher.quoteReplacement(replacement));
@@ -116,7 +112,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                         } catch (UnsupportedEncodingException ex) {
                             log.error("UnsupportedEncodingException " + ex);
                         }
-                        values.set(i, temp.toString());
+                        values.set(i, temp);
 
                      }
                 }
@@ -124,8 +120,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<>();
                 for (String uri : values){
-                    StdTemplateMap templateMap = new StdTemplateMap(uri);
-                    if (templateMap.extractVariablesFromStringTemplate(uri).isEmpty()){
+                    if (StdTemplateMap.extractVariablesFromStringTemplate(uri).isEmpty()){
                         validValues.add(uri);
                     }
                 }

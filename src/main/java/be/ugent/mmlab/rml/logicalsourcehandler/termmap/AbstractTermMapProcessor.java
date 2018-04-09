@@ -151,55 +151,59 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
 
         Set<String> tokens =
                 StdTemplateMap.extractVariablesFromStringTemplate(template);
-        for (String expression : tokens) {
-            List<String> replacements = extractValueFromNode(node, expression);
-            for (int i = 0; i < replacements.size(); i++) {
-                if (values.size() < (i + 1)) {
-                    values.add(template);
-                }
-                String replacement = null;
-                if (replacements.get(i) != null) {
-                    replacement = replacements.get(i).trim();
-                }
 
-                if (replacement == null || replacement.equals("")) {
-                    //if the replacement value is null or empty, 
-                    //the reulting uri would be invalid, skip this.
-                    //The placeholders remain which removes them in the end.
-                    continue;
-                }
-
-                String temp = values.get(i).trim();
-                if (expression.contains("[")) {
-                    expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
-                    temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
-                }
-                //JSONPath expression cause problems when replacing, remove the $ first
-                if ((referenceFormulation == QLTerm.JSONPATH_CLASS)
-                        && expression.contains("$")) {
-                    expression = expression.replaceAll("\\$", "");
-                    temp = temp.replaceAll("\\$", "");
-                }
-                try {
-                    if (termType != null && termType.equals(TermType.IRI.toString())) {
-                        //TODO: replace the following with URIbuilder
-                        temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}",
-                                URLEncoder.encode(replacement, "UTF-8")
-                                .replaceAll("\\+", "%20")
-                                .replaceAll("\\%21", "!")
-                                .replaceAll("\\%27", "'")
-                                .replaceAll("\\%28", "(")
-                                .replaceAll("\\%29", ")")
-                                .replaceAll("\\%7E", "~"));
-                    } else {
-                        temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+        if (tokens.size() == 0) {
+            values.add(template);
+        } else {
+            for (String expression : tokens) {
+                List<String> replacements = extractValueFromNode(node, expression);
+                for (int i = 0; i < replacements.size(); i++) {
+                    if (values.size() < (i + 1)) {
+                        values.add(template);
                     }
-                    //Use encoding UTF-8 explicit URL encode; other one is deprecated 
-                } catch (UnsupportedEncodingException ex) {
-                    log.error("UnsupportedEncodingException " + ex);
-                }
-                values.set(i, temp.toString());
+                    String replacement = null;
+                    if (replacements.get(i) != null) {
+                        replacement = replacements.get(i).trim();
+                    }
 
+                    if (replacement == null || replacement.equals("")) {
+                        //if the replacement value is null or empty,
+                        //the reulting uri would be invalid, skip this.
+                        //The placeholders remain which removes them in the end.
+                        continue;
+                    }
+
+                    String temp = values.get(i).trim();
+                    if (expression.contains("[")) {
+                        expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
+                        temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
+                    }
+                    //JSONPath expression cause problems when replacing, remove the $ first
+                    if ((referenceFormulation == QLTerm.JSONPATH_CLASS)
+                            && expression.contains("$")) {
+                        expression = expression.replaceAll("\\$", "");
+                        temp = temp.replaceAll("\\$", "");
+                    }
+                    try {
+                        if (termType != null && termType.equals(TermType.IRI.toString())) {
+                            //TODO: replace the following with URIbuilder
+                            temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}",
+                                    URLEncoder.encode(replacement, "UTF-8")
+                                            .replaceAll("\\+", "%20")
+                                            .replaceAll("\\%21", "!")
+                                            .replaceAll("\\%27", "'")
+                                            .replaceAll("\\%28", "(")
+                                            .replaceAll("\\%29", ")")
+                                            .replaceAll("\\%7E", "~"));
+                        } else {
+                            temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                        }
+                        //Use encoding UTF-8 explicit URL encode; other one is deprecated
+                    } catch (UnsupportedEncodingException ex) {
+                        log.error("UnsupportedEncodingException " + ex);
+                    }
+                    values.set(i, temp.toString());
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.logicalsourcehandler.termmap;
 
-import be.ugent.mmlab.rml.function.ConcreteFunctionProcessor;
+import be.ugent.mmlab.fno.java.ConcreteFunctionProcessor;
 import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
